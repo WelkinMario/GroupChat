@@ -14,6 +14,7 @@ public class ChatServer {
         System.out.println("Chat room created");
         while (true) {
             Socket socket = server.accept();
+            socketList.add(socket);
             System.out.println("Connected from " + socket.getInetAddress()
                                 + ":" + socket.getPort());
             new Thread(new ServerThread(socket)).start();

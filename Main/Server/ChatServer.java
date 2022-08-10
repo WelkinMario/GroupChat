@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatServer {
-    public static List<Socket> socketList = new ArrayList<Socket>();
+    public static List<Socket> socketList = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         ServerSocket server = new ServerSocket(5555);
@@ -20,4 +20,5 @@ public class ChatServer {
             new Thread(new ServerThread(socket)).start();
         }
     }
+
 }

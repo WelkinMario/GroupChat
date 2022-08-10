@@ -11,6 +11,23 @@ public class ServerThread implements Runnable {
 
     public ServerThread(Socket socket) {
         this.socket = socket;
+        init();
+    }
+
+    private void init() {
+        broadCast(socket.getPort() + " joined the chat room");
+    }
+
+    private void broadCast(String msg) {
+        try {
+            for (Socket s : ChatServer.socketList) {
+                PrintWriter wr = new PrintWriter(s.getOutputStream());
+                wr.println(msg);
+                wr.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -19,13 +36,11 @@ public class ServerThread implements Runnable {
             BufferedReader rr = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while(true) {
                 String str = rr.readLine();
-                for (Socket s : ChatServer.socketList) {
-                    PrintWriter wr = new PrintWriter(s.getOutputStream());
-                    wr.println(socket.getPort() + ": " + str);
-                    wr.flush();
-                }
+                broadCast(socket.getPort() + ": " + str);
             }
         } catch (IOException e) {
+            ChatServer.socketList.remove(socket);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

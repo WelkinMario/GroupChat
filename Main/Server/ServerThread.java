@@ -15,7 +15,7 @@ public class ServerThread implements Runnable {
     }
 
     private void init() {
-        broadCast(socket.getPort() + " joined the chat room");
+        broadCast(socket.getPort() + " joined chat room");
     }
 
     private void broadCast(String msg) {
@@ -40,6 +40,9 @@ public class ServerThread implements Runnable {
             }
         } catch (IOException e) {
             ChatServer.socketList.remove(socket);
+            broadCast(socket.getPort() + " left chat room");
+            System.out.println("Disconnected to " + socket.getInetAddress()
+                                + ":" + socket.getPort());
         } catch (Exception e) {
             e.printStackTrace();
         }

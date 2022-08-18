@@ -37,11 +37,15 @@ public class ChatClient {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        Socket socket = new Socket("localhost", 5555);
-        System.out.println("Client connected");
-        login(socket);
-        new Thread(new ClientSender(socket)).start();
-        new Thread(new ClientListen(socket)).start();
+    public static void main(String[] args) {
+        try {
+            Socket socket = new Socket("localhost", 5555);
+            System.out.println("Client connected");
+            login(socket);
+            new Thread(new ClientSender(socket)).start();
+            new Thread(new ClientListen(socket)).start();
+        } catch (IOException e) {
+            System.out.println("Error: Server is not up");
+        }
     }
 }

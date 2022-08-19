@@ -33,7 +33,7 @@ public class ChatClient {
                 String rst = rr.readLine();
                 String[] res = rst.split(SLASH);
                 if (res[0].equals("OK")) {
-                    System.out.println("You have joined the chat room, " + res[1]);
+                    System.out.println("login succeeded, " + res[1]);
                     log = true;
                 } else {
                     System.out.println("Error: " + res[1] + "\nPlease try again");
@@ -47,7 +47,7 @@ public class ChatClient {
     public static void main(String[] args) {
         try {
             Socket socket = new Socket("localhost", 5555);
-            System.out.println("Client connected");
+            System.out.println("Server connected");
             login(socket);
             new Thread(new ClientSender(socket)).start();
             new Thread(new ClientListen(socket)).start();

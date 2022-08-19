@@ -1,15 +1,19 @@
 package Main.Server;
 
+import lib.Status;
+
 import java.net.Socket;
 
 public class ServerClient {
     public Socket socket;
+    public Status status;
 
     private String username;
     private String password;
 
     public ServerClient(Socket socket) {
         this.socket = socket;
+        status = Status.WAIT;
     }
 
     public String getUsername() {
@@ -34,5 +38,9 @@ public class ServerClient {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

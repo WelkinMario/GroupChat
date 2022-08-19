@@ -24,13 +24,20 @@ public class ChatClient {
 
             boolean log = false;
             while (!log) {
-                System.out.print("Username");
+                System.out.print("\tUsername: ");
                 username = input.readLine();
-                System.out.print("Password");
+                System.out.print("\tPassword: ");
                 password = input.readLine();
                 wr.println(Status.LOGIN + SLASH + username + SLASH + password);
                 wr.flush();
                 String rst = rr.readLine();
+                String[] res = rst.split(SLASH);
+                if (res[0].equals("OK")) {
+                    System.out.println("You have joined the chat room, " + res[1]);
+                    log = true;
+                } else {
+                    System.out.println("Error: " + res[1] + "\nPlease try again");
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

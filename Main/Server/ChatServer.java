@@ -13,12 +13,13 @@ public class ChatServer {
     public static void main(String[] args) throws IOException {
         ServerSocket server = new ServerSocket(5555);
         System.out.println("Chat room created");
-        while (true) {
+        while (!server.isClosed()) {
             Socket socket = server.accept();
-            addClient(new ServerClient(socket));
+            ServerClient client = new ServerClient(socket);
+            addClient(client);
             System.out.println("Connected from " + socket.getInetAddress()
                                 + ":" + socket.getPort());
-            new Thread(new ServerThread(socket)).start();
+            new Thread(new ServerThread(client)).start();
         }
     }
 

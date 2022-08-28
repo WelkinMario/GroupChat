@@ -43,24 +43,16 @@ public class ServerThread implements Runnable {
                 String[] para = str.split(SLASH);
                 switch (Status.valueOf(para[0])) {
                     case SIGNUP:
+                        handleSignup(para);
                     case LOGIN:
-                        Map<String, String> users = ChatServer.getUserlist();
-                        if (users == null) {
-                            throw new IOException("Server cannot access userlist data");
-                        }
-                        if (ChatServer.isValidString(para[1]) && users.containsKey(para[1]) && users.get(para[1]).equals(para[2])) {
-                            client.setUsername(para[1]);
-                            client.setStatus(Status.LOGIN);
-                        } else {
-                            wr.println("NO" + SLASH + "the name does not exist or the password is incorrect");
-                            wr.flush();
-                        }
+                        handleLogin(para);
                         break;
                     case GUEST:
                         client.setUsername("Guest" + client.socket.getPort());
                         client.setStatus(Status.GUEST);
+                        break;
                     default:
-                        wr.println("NO" + SLASH + "Incorrect code");
+                        wr.println("NO" + SLASH + "Unknown command");
                         wr.flush();
                 }
             }
@@ -81,6 +73,37 @@ public class ServerThread implements Runnable {
             System.out.println("Error: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void handleSignup(String[] para) throws IOException {
+        PrintWriter wr = new PrintWriter(socket.getOutputStream());
+        Map<String, String> users = ChatServer.getUserlist();
+        if (users == null) {
+            throw new IOException("Server cannot access userlist data");
+        }
+        if (ChatServer.isValidString(para[1]) && (ChatServer.isValidString(para[2])) &&
+                !users.containsKey(para[1])) {
+            ChatServer.signupUser(para[1], para[2]);
+            wr.println("OK" + SLASH + "Signing up succeeded. Login in now");
+        } else {
+            wr.println("NO" + SLASH + "the name does not exist or the password is incorrect");
+            wr.flush();
+        }
+    }
+
+    private void handleLogin(String[] para) throws IOException {
+        PrintWriter wr = new PrintWriter(socket.getOutputStream());
+        Map<String, String> users = ChatServer.getUserlist();
+        if (users == null) {
+            throw new IOException("Server cannot access userlist data");
+        }
+        if (ChatServer.isValidString(para[1]) && users.containsKey(para[1]) && users.get(para[1]).equals(para[2])) {
+            client.setUsername(para[1]);
+            client.setStatus(Status.LOGIN);
+        } else {
+            wr.println("NO" + SLASH + "the name does not exist or the password is incorrect");
+            wr.flush();
         }
     }
 }

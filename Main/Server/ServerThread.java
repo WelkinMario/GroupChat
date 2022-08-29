@@ -43,7 +43,7 @@ public class ServerThread implements Runnable {
                 String[] para = str.split(SLASH);
                 switch (Status.valueOf(para[0])) {
                     case SIGNUP:
-                        handleSignup(para);
+                        if (handleSignup(para) == 0) break;
                     case LOGIN:
                         handleLogin(para);
                         break;
@@ -76,7 +76,7 @@ public class ServerThread implements Runnable {
         }
     }
 
-    private void handleSignup(String[] para) throws IOException {
+    private synchronized int handleSignup(String[] para) throws IOException {
         PrintWriter wr = new PrintWriter(socket.getOutputStream());
         Map<String, String> users = ChatServer.getUserlist();
         if (users == null) {
@@ -85,10 +85,11 @@ public class ServerThread implements Runnable {
         if (ChatServer.isValidString(para[1]) && (ChatServer.isValidString(para[2])) &&
                 !users.containsKey(para[1])) {
             ChatServer.signupUser(para[1], para[2]);
-            wr.println("OK" + SLASH + "Signing up succeeded. Login in now");
+            return 1;
         } else {
-            wr.println("NO" + SLASH + "the name does not exist or the password is incorrect");
+            wr.println("NO" + SLASH + "the name already exists or it is invalid");
             wr.flush();
+            return 0;
         }
     }
 

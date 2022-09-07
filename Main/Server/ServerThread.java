@@ -11,6 +11,10 @@ import java.util.Map;
 
 
 public class ServerThread implements Runnable {
+    /*
+    The class for handling messages from client and sending messages to all clients;
+    One ServerThread only listens to one client.
+     */
     public ServerClient client;
     public Socket socket;
 
@@ -21,6 +25,7 @@ public class ServerThread implements Runnable {
         this.socket = client.socket;
     }
 
+    // Send the message to all clients in the chat room
     private void broadCast(String msg) {
         try {
             for (Socket s : ChatServer.socketList) {
@@ -33,17 +38,21 @@ public class ServerThread implements Runnable {
         }
     }
 
+    // The main body of the class
     @Override
     public void run() {
         try {
             BufferedReader rr = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter wr = new PrintWriter(socket.getOutputStream());
+
+            // Wait and handle client's login option
             while(client.status == Status.WAIT) {
                 String str = rr.readLine();
                 String[] para = str.split(SLASH);
                 switch (Status.valueOf(para[0])) {
                     case SIGNUP:
                         if (handleSignup(para) == 0) break;
+                        // If Signup succeeded, go to Login automatically.
                     case LOGIN:
                         handleLogin(para);
                         break;
@@ -61,11 +70,13 @@ public class ServerThread implements Runnable {
             wr.flush();
             broadCast(client.getUsername() + " joined chat room");
 
+            // After the client successfully logged in, the thread would just repeat passing msg to other clients
             while(client.status != Status.WAIT) {
                 String str = rr.readLine();
                 broadCast(client.getUsername() + ": " + str);
             }
         } catch (IOException e) {
+            // Can happen when the client just closed the ChatClient
             ChatServer.rmvClient(client);
             broadCast(socket.getPort() + " left chat room");
             System.out.println("Disconnected from " + socket.getInetAddress()
@@ -76,6 +87,7 @@ public class ServerThread implements Runnable {
         }
     }
 
+    // Returns 1 if signup succeeded; returns 0 otherwise
     private synchronized int handleSignup(String[] para) throws IOException {
         PrintWriter wr = new PrintWriter(socket.getOutputStream());
         Map<String, String> users = ChatServer.getUserlist();

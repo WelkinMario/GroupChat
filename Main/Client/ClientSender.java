@@ -7,6 +7,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClientSender implements Runnable {
+    /*
+    The object works on sending user's message to server.
+     */
     public Socket socket;
 
     public ClientSender(Socket socket) {

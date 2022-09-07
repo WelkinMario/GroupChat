@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class ClientListen implements Runnable {
+    /*
+    The object works on receiving messages from server and print them out.
+     */
     public Socket socket;
 
     public ClientListen(Socket socket) {

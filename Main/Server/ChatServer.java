@@ -9,15 +9,22 @@ import java.net.Socket;
 import java.util.*;
 
 public class ChatServer {
+    /*
+    The main class for server;
+    Open ChatClient to get connection;
+     */
     public static List<Socket> socketList = new ArrayList<>();
     public static List<ServerClient> clientList = new ArrayList<>();
 
+    // the address to where usernames and passwords are stored
     private static final String DATA_SOURCE = "./Main/data/Userlist.txt";
 
+    // the main method to set up the server
     public static void main(String[] args) throws IOException {
         ServerSocket server = new ServerSocket(5555);
         System.out.println("Chat room created");
         while (!server.isClosed()) {
+            // Listening to new connections, forks thread for each client
             Socket socket = server.accept();
             ServerClient client = new ServerClient(socket);
             addClient(client);
@@ -27,6 +34,7 @@ public class ChatServer {
         }
     }
 
+    // add client info to local variable. Synchronization is used to avoid inconsistency
     public static synchronized void addClient(ServerClient client) {
         clientList.add(client);
         socketList.add(client.socket);
@@ -37,6 +45,7 @@ public class ChatServer {
         socketList.remove(client.socket);
     }
 
+    // get names and passwords in data file into a map
     public static synchronized Map<String, String> getUserlist() {
         try {
             File file = new File(DATA_SOURCE);
@@ -60,6 +69,7 @@ public class ChatServer {
         return null;
     }
 
+    // add name and password to the data file.
     public static synchronized void signupUser(String name, String pass) {
         String data = name + " " + pass + "\n";
         try {
@@ -74,6 +84,7 @@ public class ChatServer {
         }
     }
 
+    // a simple requirement on the username and password
     public static boolean isValidString(String str) {
         return !str.trim().equals("") && str.length() < 32 && !str.matches(".*?(/s|\\|/).*");
     }

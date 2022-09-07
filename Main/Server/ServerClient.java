@@ -5,6 +5,10 @@ import lib.Status;
 import java.net.Socket;
 
 public class ServerClient {
+    /*
+    The object for locally storing the client information
+    Reserved for future use/expansion
+     */
     public Socket socket;
     public Status status;
 
